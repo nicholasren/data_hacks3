@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # Copyright 2010 Bitly
@@ -85,7 +85,7 @@ def run(input_stream, options):
     for value, key in data:
         if options.percentage:
             percentage = " (%0.2f%%)" % (100 * Decimal(value) / Decimal(total))
-        print((str_format % (key[:max_length], value, (value / scale) * options.dot, percentage)))
+        print((str_format % (key[:max_length], value, int(value / scale) * options.dot, percentage)))
 
 if __name__ == "__main__":
     parser = OptionParser()
