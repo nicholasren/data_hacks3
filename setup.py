@@ -6,9 +6,9 @@ version = "0.0.1"
 setup(name='data_hacks3',
       version=version,
       description='Command line utilities for data analysis',
-      author=['Jehiah Czebotar', 'Xiaojun Ren'],
+      author=['Xiaojun Ren'],
       author_email='nicholas.x.ren@gmail.com',
-      url='https://github.com/nicholasren/datahacks3',
+      url='https://github.com/nicholasren/data_hacks3',
       classifiers=[
             'Development Status :: 4 - Beta',
             'Programming Language :: Python',

@@ -1,15 +1,13 @@
-data_hacks
+data_hacks3
 ==========
+Command line utilities for data analysis.
+This is a python3 port of [data_hacks](https://github.com/bitly/data_hacks).
+*Note:* The scripts expecting `python3` available in `PATH`.
 
-Command line utilities for data analysis
 
-Installing: `pip install data_hacks`
+Installing: `pip3 install data_hacks3`
 
-Installing from github `pip install -e git://github.com/bitly/data_hacks.git#egg=data_hacks`
-
-Installing from source `python setup.py install`
-
-data_hacks are friendly. Ask them for usage information with `--help`
+data_hacks3 are friendly. Ask them for usage information with `--help`
 
 histogram.py
 ------------
