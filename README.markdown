@@ -2,10 +2,9 @@ data_hacks3
 ==========
 Command line utilities for data analysis.
 This is a python3 port of [data_hacks](https://github.com/bitly/data_hacks).
-*Note:* The scripts expecting `python3` available in `PATH`.
 
 
-Installing: `pip3 install data_hacks3`
+Installing: `pip install data_hacks3`
 
 data_hacks3 are friendly. Ask them for usage information with `--help`
 
