@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "data_hacks3"
-version = "0.0.4"
+version = "0.0.5"
 description = "Command line utilities for data analysis"
 readme = { file = "README.markdown", content-type = "text/markdown" }
 license = { text = "Apache-2.0" }
