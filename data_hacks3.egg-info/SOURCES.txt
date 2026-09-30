@@ -1,0 +1,10 @@
+setup.py
+data_hacks/bar_chart.py
+data_hacks/histogram.py
+data_hacks/ninety_five_percent.py
+data_hacks/run_for.py
+data_hacks/sample.py
+data_hacks3.egg-info/PKG-INFO
+data_hacks3.egg-info/SOURCES.txt
+data_hacks3.egg-info/dependency_links.txt
+data_hacks3.egg-info/top_level.txt

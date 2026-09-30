@@ -1,0 +1,18 @@
+Metadata-Version: 2.4
+Name: data_hacks3
+Version: 0.0.4
+Summary: Command line utilities for data analysis
+Home-page: https://github.com/nicholasren/data_hacks3
+Download-URL: http://github.com/downloads/nicholasren/data_hacks3/data_hacks3-0.0.4.tar.gz
+Author: ['Xiaojun Ren']
+Author-email: nicholas.x.ren@gmail.com
+Classifier: Development Status :: 4 - Beta
+Classifier: Programming Language :: Python
+Classifier: Intended Audience :: System Administrators
+Classifier: Topic :: Terminals
+Dynamic: author
+Dynamic: author-email
+Dynamic: classifier
+Dynamic: download-url
+Dynamic: home-page
+Dynamic: summary

@@ -5,13 +5,13 @@ action=$1
 case $action in
   build)
     rm -rf dist
-    python setup.py sdist
+    uv build
   ;;
   publish)
-    twine upload dist/*
+    uvx twine upload dist/*
   ;;
   test_publish)
-     twine upload --repository testpypi dist/*
+     uvx twine upload --repository testpypi dist/*
   ;;
   *)
     echo "Usage: $0 [build|test_publish|publish]"

@@ -61,4 +61,4 @@ python3 -m pytest data_hacks/histogram.py -k mvsd
 ## Releasing
 
 1. Bump `version` in `setup.py`.
-2. `./go build` (creates `dist/` sdist), then `./go test_publish` or `./go publish`.
+2. `./go build` (creates `dist/` sdist + wheel via `uv build`), then `./go test_publish` or `./go publish`.
