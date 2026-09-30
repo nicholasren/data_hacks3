@@ -46,9 +46,7 @@ README.markdown      user-facing docs and examples
 ## Testing
 
 There is no test suite or CI. `histogram.py` contains `test_mvsd()` and
-`test_median()` (pytest-style). Known issue: `test_median()` fails on Python 3
-because `median()` calls `map(None, ...)` when no key is given, and the
-even-length integer case expects Python 2 floor division.
+`test_median()` (pytest-style); run them after touching the stats code.
 
 Smoke-test changes by piping data through the scripts:
 

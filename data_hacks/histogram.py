@@ -102,7 +102,7 @@ def load_stream(input_stream, agg_value_key, agg_key_value):
 
 def median(values, key=None):
     if not key:
-        key = None  # map and sort accept None as identity
+        key = lambda x: x  # identity; py3 map() does not accept None
     length = len(values)
     if length % 2:
         median_indeces = [int(length/2)]
@@ -116,7 +116,7 @@ def median(values, key=None):
 
 def test_median():
     assert 6 == median([8, 7, 9, 1, 2, 6, 3])  # odd-sized list
-    assert 4 == median([4, 5, 2, 1, 9, 10])  # even-sized int list. (4+5)/2 = 4
+    assert 4.5 == median([4, 5, 2, 1, 9, 10])  # even-sized int list. (4+5)/2 = 4.5
     # even-sized float list. (4.0+5)/2 = 4.5
     assert "4.50" == "%.2f" % median([4.0, 5, 2, 1, 9, 10])
 
