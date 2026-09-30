@@ -52,8 +52,11 @@ def calc_95(data, count):
         if start > threshold:
             return t
 
-if __name__ == "__main__":
+def main():
     if sys.stdin.isatty() or '--help' in sys.argv or '-h' in sys.argv:
         print("Usage: cat data | %s" % os.path.basename(sys.argv[0]))
         sys.exit(1)
     run()
+
+if __name__ == "__main__":
+    main()

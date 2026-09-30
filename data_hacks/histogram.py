@@ -28,6 +28,7 @@ import sys
 from decimal import Decimal
 import logging
 import math
+import shutil
 from optparse import OptionParser
 from collections import namedtuple
 
@@ -78,12 +79,28 @@ def test_mvsd():
     assert '%.14f' % mvsd.sd() == "2.87228132326901"
 
 
-def load_stream(input_stream, agg_value_key, agg_key_value):
+def select_field(line, field, delimiter):
+    """return the 1-based field of line (negative counts from the end), or
+    None when the line has no such field"""
+    parts = line.split(delimiter)
+    try:
+        return parts[field - 1 if field > 0 else field].strip()
+    except IndexError:
+        return None
+
+
+def load_stream(input_stream, agg_value_key, agg_key_value, field=None,
+                delimiter=None):
     for line in input_stream:
         clean_line = line.strip()
         if not clean_line:
             # skip empty lines (ie: newlines)
             continue
+        if field:
+            clean_line = select_field(clean_line, field, delimiter)
+            if not clean_line:
+                print("invalid line %r" % line, file=sys.stderr)
+                continue
         if clean_line[0] in ['"', "'"]:
             clean_line = clean_line.strip("\"'")
         try:
@@ -228,9 +245,17 @@ def histogram(stream, options):
                 bucket_counts[bucket_postion] += record.count
                 break
 
-    # auto-pick the hash scale
-    if max(bucket_counts) > 75:
-        bucket_scale = int(max(bucket_counts) / 75)
+    percentage = ""
+    format_string = options.format + ' - ' + options.format + ' [%6d]: %s%s'
+
+    # auto-pick the hash scale so the widest bar fits the output width
+    prefix_length = max(len(format_string % (b, b, 0, '', ''))
+                        for b in [min_v] + boundaries)
+    if options.percentage:
+        prefix_length += len(" (100.00%)")
+    bar_width = max(10, options.width - prefix_length)
+    if max(bucket_counts) > bar_width:
+        bucket_scale = int(math.ceil(max(bucket_counts) / bar_width))
 
     print(("# NumSamples = %d; Min = %0.2f; Max = %0.2f" %
           (samples, min_v, max_v)))
@@ -245,8 +270,6 @@ def histogram(stream, options):
     
     bucket_min = min_v
     bucket_max = min_v
-    percentage = ""
-    format_string = options.format + ' - ' + options.format + ' [%6d]: %s%s'
     for bucket in range(buckets):
         bucket_min = bucket_max
         bucket_max = boundaries[bucket]
@@ -260,7 +283,7 @@ def histogram(stream, options):
         print((format_string % (bucket_min, bucket_max, bucket_count, options.dot * star_count, percentage)))
 
 
-if __name__ == "__main__":
+def main():
     parser = OptionParser()
     parser.usage = "cat data | %prog [options]"
     parser.add_option("-a", "--agg", dest="agg_value_key", default=False,
@@ -289,12 +312,30 @@ if __name__ == "__main__":
     parser.add_option("-p", "--percentage", dest="percentage", default=False,
                       action="store_true", help="List percentage for each bar")
     parser.add_option("--dot", dest="dot", default='∎', help="Dot representation")
+    parser.add_option("-w", "--width", dest="width", type="int",
+                      default=shutil.get_terminal_size().columns,
+                      help="Output width in characters [default: terminal " +
+                      "width, or 80 when piped]")
+    parser.add_option("-c", "--column", dest="field", type="int",
+                      help="Use only this column of each line (1-based, " +
+                      "negative counts from the end)")
+    parser.add_option("-d", "--delimiter", dest="delimiter",
+                      help="Column delimiter for --column [default: whitespace]")
 
     (options, args) = parser.parse_args()
+    if options.field == 0:
+        parser.error("--column is 1-based; use -1 for the last column")
+    if options.field and (options.agg_value_key or options.agg_key_value):
+        parser.error("--column cannot be combined with -a/-A")
     if sys.stdin.isatty():
         # if isatty() that means it's run without anything piped into it
         parser.print_usage()
         print("for more help use --help")
         sys.exit(1)
     histogram(load_stream(sys.stdin, options.agg_value_key,
-                          options.agg_key_value), options)
+                          options.agg_key_value, options.field,
+                          options.delimiter), options)
+
+
+if __name__ == "__main__":
+    main()

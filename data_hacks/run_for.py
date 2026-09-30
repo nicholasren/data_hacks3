@@ -47,7 +47,7 @@ def run(runtime):
         if time.time() > end:
             return
 
-if __name__ == "__main__":
+def main():
     usage = "Usage: tail -f access.log | %s [time] | ..." % os.path.basename(sys.argv[0])
     help = "time can be in the format 10s, 10m, 10h, etc"
     if sys.stdin.isatty():
@@ -60,3 +60,6 @@ if __name__ == "__main__":
         print(usage)
         sys.exit(1)
     run(runtime)
+
+if __name__ == "__main__":
+    main()

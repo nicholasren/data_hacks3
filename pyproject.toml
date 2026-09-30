@@ -1,0 +1,40 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "data_hacks3"
+version = "0.0.4"
+description = "Command line utilities for data analysis"
+readme = { file = "README.markdown", content-type = "text/markdown" }
+license = { text = "Apache-2.0" }
+authors = [{ name = "Xiaojun Ren", email = "nicholas.x.ren@gmail.com" }]
+requires-python = ">=3.8"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Programming Language :: Python :: 3",
+    "Intended Audience :: System Administrators",
+    "Topic :: Terminals",
+]
+
+[project.urls]
+Homepage = "https://github.com/nicholasren/data_hacks3"
+
+# each tool is installed under its bare name and, for backward
+# compatibility, under its original *.py name
+[project.scripts]
+histogram = "data_hacks.histogram:main"
+"histogram.py" = "data_hacks.histogram:main"
+bar_chart = "data_hacks.bar_chart:main"
+"bar_chart.py" = "data_hacks.bar_chart:main"
+percentile = "data_hacks.percentile:main"
+"percentile.py" = "data_hacks.percentile:main"
+ninety_five_percent = "data_hacks.ninety_five_percent:main"
+"ninety_five_percent.py" = "data_hacks.ninety_five_percent:main"
+sample = "data_hacks.sample:main"
+"sample.py" = "data_hacks.sample:main"
+run_for = "data_hacks.run_for:main"
+"run_for.py" = "data_hacks.run_for:main"
+
+[tool.setuptools]
+packages = ["data_hacks"]

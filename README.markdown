@@ -8,6 +8,15 @@ Installing: `pip install data_hacks3`
 
 data_hacks3 are friendly. Ask them for usage information with `--help`
 
+Each tool is installed under its plain name (`histogram`, `bar_chart`, `percentile`,
+`ninety_five_percent`, `sample`, `run_for`) and under its original `*.py` name.
+
+`histogram.py`, `bar_chart.py` and `percentile.py` can pick one column out of each
+line with `-c/--column N` (1-based; `-c -1` is the last column) and `-d/--delimiter`
+(whitespace by default), so there's no need for `awk '{print $NF}' |` in front.
+`histogram.py` and `bar_chart.py` size their bars to the terminal width; override it
+with `-w/--width`.
+
 histogram.py
 ------------
 
@@ -49,14 +58,32 @@ With logarithmic scale
      2492.4252 -  4992.6168 [   269]: ∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎
      4992.6168 -  9993.0000 [   483]: ∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎
 
+percentile.py
+-------------
+
+Calculate percentiles of a stream of decimal values (95% by default).
+
+This is useful for finding response-time percentiles from access logs.
+
+Example (assuming response time is the last column in your access log):
+
+    $ percentile.py -c -1 < /path/to/access.log
+    0.412
+
+    $ percentile.py -c -1 -p 50,90,99,99.9 --summary < /path/to/access.log
+    count	10000
+    min	0.002
+    max	3.870
+    mean	0.1873
+    p50	0.121
+    p90	0.305
+    p99	0.980
+    p99.9	2.410
+
 ninety_five_percent.py
 ----------------------
 
-A utility script that takes a stream of decimal values and outputs the 95% time.
-
-This is useful for finding the 95% response time from access logs.
-
-Example (assuming response time is the last column in your access log):
+The original single-purpose version of `percentile.py`: outputs the 95% value.
 
     $ awk '{print $NF}' /path/to/access.log | ninety_five_percent.py
     
@@ -68,6 +95,8 @@ Filter a stream to a random sub-sample of the stream
 Example:
 
     $ cat access.log | sample.py 10% | post_process.py
+
+Rates can be fractional (`0.1%` or `1/1000`), and `--seed N` makes the sample reproducible.
 
 run_for.py
 ----------

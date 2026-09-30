@@ -22,16 +22,31 @@ https://github.com/bitly/data_hacks
 """
 import sys
 import math
+import shutil
 from collections import defaultdict
 from optparse import OptionParser
 from decimal import Decimal
 
-def load_stream(input_stream):
+def select_field(line, field, delimiter):
+    """return the 1-based field of line (negative counts from the end), or
+    None when the line has no such field"""
+    parts = line.split(delimiter)
+    try:
+        return parts[field - 1 if field > 0 else field].strip()
+    except IndexError:
+        return None
+
+def load_stream(input_stream, field=None, delimiter=None):
     for line in input_stream:
         clean_line = line.strip()
         if not clean_line:
             # skip empty lines (ie: newlines)
             continue
+        if field:
+            clean_line = select_field(clean_line, field, delimiter)
+            if not clean_line:
+                print("invalid line %r" % line, file=sys.stderr)
+                continue
         if clean_line[0] in ['"', "'"]:
             clean_line = clean_line.strip('"').strip("'")
         if clean_line:
@@ -61,7 +76,11 @@ def run(input_stream, options):
     
     max_length = max([len(key) for key in list(data.keys())])
     max_length = min(max_length, 50)
-    value_characters = 80 - max_length
+    # key, " [%6d] " and the optional percentage surround the bar
+    value_characters = options.width - max_length - len(" [000000] ")
+    if options.percentage:
+        value_characters -= len(" (100.00%)")
+    value_characters = max(10, value_characters)
     max_value = max(data.values())
     scale = int(math.ceil(float(max_value) / value_characters))
     scale = max(1, scale)
@@ -87,7 +106,7 @@ def run(input_stream, options):
             percentage = " (%0.2f%%)" % (100 * Decimal(value) / Decimal(total))
         print((str_format % (key[:max_length], value, int(value / scale) * options.dot, percentage)))
 
-if __name__ == "__main__":
+def main():
     parser = OptionParser()
     parser.usage = "cat data | %prog [options]"
     parser.add_option("-a", "--agg", dest="agg_value_key", default=False, action="store_true",
@@ -105,12 +124,26 @@ if __name__ == "__main__":
     parser.add_option("-p", "--percentage", dest="percentage", default=False, action="store_true",
                         help="List percentage for each bar")
     parser.add_option("--dot", dest="dot", default='∎', help="Dot representation")
+    parser.add_option("-w", "--width", dest="width", type="int",
+                      default=shutil.get_terminal_size().columns,
+                      help="Output width in characters [default: terminal width, or 80 when piped]")
+    parser.add_option("-c", "--column", dest="field", type="int",
+                      help="Use only this column of each line (1-based, negative counts from the end)")
+    parser.add_option("-d", "--delimiter", dest="delimiter",
+                      help="Column delimiter for --column [default: whitespace]")
 
     (options, args) = parser.parse_args()
+    if options.field == 0:
+        parser.error("--column is 1-based; use -1 for the last column")
+    if options.field and (options.agg_value_key or options.agg_key_value):
+        parser.error("--column cannot be combined with -a/-A")
     
     if sys.stdin.isatty():
         parser.print_usage()
         print("for more help use --help")
         sys.exit(1)
-    run(load_stream(sys.stdin), options)
+    run(load_stream(sys.stdin, options.field, options.delimiter), options)
+
+if __name__ == "__main__":
+    main()
 
